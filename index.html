@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PHP Iframe + Notice Hider Generator</title>
+  <style>
+    :root {
+      --primary: #0073aa;
+      --primary-hover: #005f8d;
+      --bg: #f1f3f6;
+      --text: #222;
+      --card-bg: #fff;
+      --border: #ddd;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      border: 1px solid var(--border);
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+
+    p {
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    input[type="text"] {
+      width: 96%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: var(--primary);
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+    }
+
+    pre {
+      background: #1e1e1e;
+      color: #dcdcdc;
+      padding: 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      overflow-x: auto;
+    }
+
+    .copied {
+      color: green;
+      font-weight: 500;
+      margin-left: 10px;
+      display: inline-block;
+    }
+
+    @media (max-width: 600px) {
+      .btn-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>PHP Admin Page Code: Iframe + Hide WP Notices</h2>
+    <p>অনেক সময় এডমিন মেনু টেমপ্লেট বা পেজতে আইফ্রেম শো করানোর প্রয়োজন হয় এবং আই ফ্রেম শো করালে ওয়ার্ডপ্রেসের সমস্ত নোটিশ হাইড করতে হয়। এই টুলটি দিয়ে আপনি সহজেই কোড জেনারেট করে কপি করতে পারবেন।</p>
+
+    <label for="screenId">Screen ID:</label>
+    <input type="text" id="screenId" placeholder="admin_page_devsoffice_unlimited_custom_tab__menu" />
+
+    <label for="iframeUrl">Iframe URL:</label>
+    <input type="text" id="iframeUrl" placeholder="https://devsoffice.com/unlimited-custom-tabs" />
+
+    <div class="btn-group">
+      <button onclick="generateCode()">Generate PHP Code</button>
+      <button onclick="copyToClipboard()">Copy to Clipboard</button>
+      <span id="copiedText" class="copied" style="display:none;">Copied!</span>
+    </div>
+
+    <pre id="outputCode"></pre>
+  </div>
+
+  <script>
+    function generateCode() {
+      const screenId = document.getElementById('screenId').value.trim();
+      const iframeUrl = document.getElementById('iframeUrl').value.trim();
+      const output = document.getElementById('outputCode');
+
+      if (!screenId || !iframeUrl) {
+        alert("Please fill in both fields.");
+        return;
+      }
+
+      const uniqueVar = 'screencustom_' + Math.random().toString(36).substring(2, 8);
+
+      const code = `$${uniqueVar} = get_current_screen();
+
+if (isset($${uniqueVar}->id) && $${uniqueVar}->id === '${screenId}') {
+    echo '<style>
+        /* Hide all admin notices */
+        .notice,
+        .update-nag,
+        .updated,
+        .error,
+        .is-dismissible,
+        .notice-success,
+        .notice-warning,
+        .notice-error,
+        .notice-info {
+            display: none !important;
+        }
+
+        /* Disable scrollbar */
+        html, body {
+            overflow: hidden !important;
+        }
+
+        /* Hide admin footer */
+        div#wpfooter {
+            display: none !important;
+        }
+
+        /* Remove extra bottom padding */
+        div#wpbody-content {
+            padding-bottom: 0px !important;
+        }
+    </style>';
+}
+
+?>
+<iframe src="${iframeUrl}"
+        style="width:100%; height:100vh; border:none; margin:0; padding:0; overflow:hidden;">
+</iframe>
+<?php`;
+
+      output.textContent = code;
+      document.getElementById('copiedText').style.display = "none";
+    }
+
+    function copyToClipboard() {
+      const output = document.getElementById('outputCode');
+      const textArea = document.createElement("textarea");
+      textArea.value = output.textContent;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      document.getElementById('copiedText').style.display = "inline";
+    }
+  </script>
+
+</body>
+</html>
